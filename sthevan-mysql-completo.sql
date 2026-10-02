@@ -50,7 +50,7 @@ DEALLOCATE PREPARE stmt;
 
 -- --------------------------------------------------------
 -- Admin do painel
--- Login: admin  |  Senha: sthevan2026
+-- Login: 01  |  Senha: Sh2308
 -- --------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `admin_users` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -61,9 +61,9 @@ CREATE TABLE IF NOT EXISTS `admin_users` (
   UNIQUE KEY `uq_username` (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-DELETE FROM `admin_users` WHERE `username` = 'admin';
+DELETE FROM `admin_users`;
 INSERT INTO `admin_users` (`username`, `password_hash`) VALUES
-('admin', '$2y$10$81HnUwLt17XylPsB4wi2cO.LKys36PvVHUEaSl9t836mFlpelerLy');
+('01', '$2y$10$NGDKHX1lc87.eWezr0G1auk.ob5hnwTLhrYmwf/vNxtMQ/9Dj/QM2');
 
 -- --------------------------------------------------------
 -- Clientes / mensalidades

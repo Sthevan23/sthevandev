@@ -47,7 +47,7 @@ Arquivos importantes que sobem juntos:
 ## 4. Criar o usuário admin
 
 1. Acesse: `https://sthevandev.com.br/admin/setup.php`
-2. Defina usuário e senha (padrão sugerido: `admin` / `sthevan2026`)
+2. Defina usuário e senha (padrão: `01` / `Sh2308`)
 3. **Apague** o arquivo `admin/setup.php` depois
 
 ## 5. Usar o painel

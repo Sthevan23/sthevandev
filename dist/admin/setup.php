@@ -10,8 +10,8 @@ require_once dirname(__DIR__) . '/includes/db.php';
 
 $done = false;
 $error = '';
-$defaultUser = 'admin';
-$defaultPass = 'sthevan2026';
+$defaultUser = '01';
+$defaultPass = 'Sh2308';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim((string) ($_POST['username'] ?? $defaultUser));
