@@ -1,0 +1,15 @@
+# Deploy plano (public_html = conteúdo de dist/)
+<FilesMatch "^(config\.php|config\.example\.php|database\.sql)$">
+  Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^admin/ - [L]
+  RewriteRule \.(js|css|map|png|jpe?g|gif|svg|webp|ico|woff2?|ttf|json)$ - [L]
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+  RewriteRule ^ index.html [L]
+</IfModule>

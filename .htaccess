@@ -3,7 +3,6 @@
   Require all denied
 </FilesMatch>
 
-# Fallback para Apache antigo
 <IfModule !mod_authz_core.c>
   <FilesMatch "^(config\.php|config\.example\.php|database\.sql)$">
     Order allow,deny
@@ -11,19 +10,29 @@
   </FilesMatch>
 </IfModule>
 
-# SPA / rotas limpas (site React buildado)
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
 
-  # Não interferir no painel PHP
+  # Painel PHP (na raiz do repo)
   RewriteRule ^admin/ - [L]
+  RewriteRule ^includes/ - [L]
 
-  # Arquivos e pastas reais passam direto
+  # Site buildado fica em /dist — mapear URLs públicas
+  RewriteRule ^assets/(.*)$ dist/assets/$1 [L]
+  RewriteRule ^projects/(.*)$ dist/projects/$1 [L]
+  RewriteRule ^(favicon\.svg|avatar\.jpg|icons\.svg)$ dist/$1 [L]
+  RewriteRule ^(preview-[^/]+\.png)$ dist/$1 [L]
+
+  # Home → build de produção (não o index.html do Vite)
+  RewriteRule ^$ dist/index.html [L]
+
+  # Arquivos/pastas reais na raiz
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
-  # Demais rotas → index.html do portfólio
-  RewriteRule ^ index.html [L]
+  # Fallback do portfólio
+  RewriteCond %{REQUEST_URI} !^/admin
+  RewriteRule ^ dist/index.html [L]
 </IfModule>

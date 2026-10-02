@@ -1,0 +1,5 @@
+1. Copie config.example.php para config.php e preencha o MySQL.
+2. Importe database.sql no phpMyAdmin.
+3. Envie TODO o conteúdo desta pasta (dist) para public_html.
+4. Acesse /admin/setup.php uma vez e depois APAGUE o setup.php.
+5. Painel: https://sthevandev.com.br/admin/
