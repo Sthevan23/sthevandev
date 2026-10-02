@@ -47,14 +47,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>" />
         <label>
           Usuário
-          <input name="username" autocomplete="username" required autofocus />
+          <input name="username" autocomplete="username" required autofocus placeholder="01" />
         </label>
         <label>
           Senha
-          <input type="password" name="password" autocomplete="current-password" required />
+          <input type="password" name="password" autocomplete="current-password" required placeholder="••••••••" />
         </label>
         <button type="submit" class="adm-btn adm-btn-primary">Entrar</button>
       </form>
+      <p class="adm-login-hint">Acesso: usuário <strong>01</strong> (não é e-mail)</p>
     </div>
   </div>
 </body>

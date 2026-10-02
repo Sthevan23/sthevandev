@@ -145,6 +145,12 @@ button {
   margin-bottom: 1.5rem;
 }
 
+.adm-login-hint {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
 .adm-login-form {
   display: flex;
   flex-direction: column;
