@@ -12,6 +12,7 @@ if (!existsSync(dist)) {
 const copies = [
   ["admin", "admin"],
   ["includes", "includes"],
+  ["config.php", "config.php"],
   ["config.example.php", "config.example.php"],
   ["database.sql", "database.sql"],
   ["HOSTINGER.md", "HOSTINGER.md"],

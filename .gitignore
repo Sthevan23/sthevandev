@@ -10,8 +10,6 @@ lerna-debug.log*
 node_modules
 dist-ssr
 *.local
-config.php
-dist/config.php
 sthevandev-hostinger.zip
 
 # Editor directories and files

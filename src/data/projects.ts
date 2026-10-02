@@ -18,6 +18,32 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    id: "verissimo",
+    name: "Veríssimo Pratas",
+    category: "E-commerce",
+    description:
+      "Loja online de pratas e semijoias com catálogo, animações e painel — elegância que permanece.",
+    technologies: [
+      "React",
+      "TypeScript",
+      "Vite",
+      "Tailwind CSS",
+      "Framer Motion",
+    ],
+    image: "/projects/semijoias/pulseira.jpg",
+    thumbs: [
+      "/projects/semijoias/anel.jpg",
+      "/projects/semijoias/colar.jpg",
+      "/projects/semijoias/pulseira.jpg",
+    ],
+    href: "https://verissimopratas.com.br",
+    size: "xl",
+    featured: true,
+    accent: "#c9a227",
+    year: "2026",
+    mockup: "store",
+  },
+  {
     id: "suits-moda",
     name: "Suits Moda",
     category: "Website / E-commerce",
@@ -31,8 +57,7 @@ export const projects: Project[] = [
       "/projects/suits/hero.png",
     ],
     href: "https://sthevan23.github.io/suit_modas/",
-    size: "xl",
-    featured: true,
+    size: "lg",
     accent: "#c4a574",
     year: "2025",
     mockup: "store",
@@ -92,31 +117,6 @@ export const projects: Project[] = [
     size: "md",
     accent: "#f472b6",
     year: "2025",
-    mockup: "store",
-  },
-  {
-    id: "verissimo",
-    name: "Veríssimo Pratas",
-    category: "E-commerce",
-    description:
-      "Loja online de pratas e semijoias com catálogo, animações e painel — elegância que permanece.",
-    technologies: [
-      "React",
-      "TypeScript",
-      "Vite",
-      "Tailwind CSS",
-      "Framer Motion",
-    ],
-    image: "/projects/semijoias/pulseira.jpg",
-    thumbs: [
-      "/projects/semijoias/anel.jpg",
-      "/projects/semijoias/colar.jpg",
-      "/projects/semijoias/pulseira.jpg",
-    ],
-    href: "https://verissimopratas.com.br",
-    size: "md",
-    accent: "#c9a227",
-    year: "2026",
     mockup: "store",
   },
   {

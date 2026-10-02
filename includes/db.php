@@ -9,12 +9,23 @@ function app_config(): array
 {
     static $config = null;
     if ($config === null) {
-        $path = dirname(__DIR__) . '/config.php';
-        if (!is_file($path)) {
+        $candidates = [
+            dirname(__DIR__) . '/config.php',
+            __DIR__ . '/../config.php',
+            $_SERVER['DOCUMENT_ROOT'] . '/config.php',
+        ];
+        $path = null;
+        foreach ($candidates as $candidate) {
+            if (is_file($candidate)) {
+                $path = $candidate;
+                break;
+            }
+        }
+        if ($path === null) {
             http_response_code(500);
             exit(
                 'Arquivo config.php não encontrado. ' .
-                'Copie config.example.php para config.php e preencha os dados do banco.'
+                'Envie o config.php para a pasta public_html (raiz do site).'
             );
         }
         $config = require $path;
