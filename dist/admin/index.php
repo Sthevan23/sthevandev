@@ -35,11 +35,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $url = trim((string) ($_POST['url'] ?? ''));
             $monthly = (float) str_replace(',', '.', (string) ($_POST['monthly_value'] ?? '0'));
             $status = (string) ($_POST['status'] ?? 'ativo');
+            $dueDay = (int) ($_POST['due_day'] ?? 5);
             $startDate = trim((string) ($_POST['start_date'] ?? ''));
             $notes = trim((string) ($_POST['notes'] ?? ''));
 
             if (!in_array($status, $statuses, true)) {
                 $status = 'ativo';
+            }
+            if ($dueDay < 1 || $dueDay > 31) {
+                $dueDay = 5;
             }
 
             if ($clientName === '' || $siteName === '') {
@@ -48,17 +52,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $startDateSql = $startDate !== '' ? $startDate : null;
 
+                // Garante coluna due_day
+                $hasDue = $pdo->query("SHOW COLUMNS FROM clients LIKE 'due_day'")->fetch();
+                if (!$hasDue) {
+                    $pdo->exec("ALTER TABLE clients ADD COLUMN due_day TINYINT UNSIGNED NOT NULL DEFAULT 5 AFTER status");
+                }
+
                 if ($id > 0) {
                     $stmt = $pdo->prepare(
-                        'UPDATE clients SET client_name=?, site_name=?, url=?, monthly_value=?, status=?, start_date=?, notes=? WHERE id=?'
+                        'UPDATE clients SET client_name=?, site_name=?, url=?, monthly_value=?, status=?, due_day=?, start_date=?, notes=? WHERE id=?'
                     );
-                    $stmt->execute([$clientName, $siteName, $url, $monthly, $status, $startDateSql, $notes, $id]);
+                    $stmt->execute([$clientName, $siteName, $url, $monthly, $status, $dueDay, $startDateSql, $notes, $id]);
                     $flash = 'Cliente atualizado.';
                 } else {
                     $stmt = $pdo->prepare(
-                        'INSERT INTO clients (client_name, site_name, url, monthly_value, status, start_date, notes) VALUES (?,?,?,?,?,?,?)'
+                        'INSERT INTO clients (client_name, site_name, url, monthly_value, status, due_day, start_date, notes) VALUES (?,?,?,?,?,?,?,?)'
                     );
-                    $stmt->execute([$clientName, $siteName, $url, $monthly, $status, $startDateSql, $notes]);
+                    $stmt->execute([$clientName, $siteName, $url, $monthly, $status, $dueDay, $startDateSql, $notes]);
                     $flash = 'Cliente adicionado.';
                 }
             }
@@ -203,8 +213,8 @@ $user = auth_user();
             <th>Cliente</th>
             <th>Site</th>
             <th>Valor mensal</th>
+            <th>Vence</th>
             <th>Status</th>
-            <th>Desde</th>
             <th></th>
           </tr>
         </thead>
@@ -228,8 +238,8 @@ $user = auth_user();
                 </div>
               </td>
               <td class="adm-money"><?= money_br($c['monthly_value']) ?></td>
+              <td>dia <?= (int) ($c['due_day'] ?? 5) ?></td>
               <td><span class="adm-status adm-status-<?= e($c['status']) ?>"><?= e($c['status']) ?></span></td>
-              <td><?= e(format_date_br($c['start_date'])) ?></td>
               <td class="adm-row-actions">
                 <a class="adm-icon-btn" href="?edit=<?= (int) $c['id'] ?>" title="Editar">✎</a>
                 <form method="post" onsubmit="return confirm('Remover este cliente?');" style="display:inline">
@@ -274,6 +284,13 @@ $user = auth_user();
                      value="<?= e((string) ($editing['monthly_value'] ?? '0')) ?>" />
             </label>
             <label>
+              Dia do vencimento
+              <input type="number" name="due_day" min="1" max="31"
+                     value="<?= e((string) ($editing['due_day'] ?? '5')) ?>" />
+            </label>
+          </div>
+          <div class="adm-form-row">
+            <label>
               Status
               <select name="status">
                 <?php foreach ($statuses as $s): ?>
@@ -283,11 +300,11 @@ $user = auth_user();
                 <?php endforeach; ?>
               </select>
             </label>
+            <label>
+              Data de início
+              <input type="date" name="start_date" value="<?= e($editing['start_date'] ?? date('Y-m-d')) ?>" />
+            </label>
           </div>
-          <label>
-            Data de início
-            <input type="date" name="start_date" value="<?= e($editing['start_date'] ?? date('Y-m-d')) ?>" />
-          </label>
           <label>
             Observações
             <textarea name="notes" rows="3" placeholder="Plano, domínio, hospedagem…"><?= e($editing['notes'] ?? '') ?></textarea>
