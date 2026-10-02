@@ -1,0 +1,29 @@
+# Bloquear acesso direto a arquivos sensíveis
+<FilesMatch "^(config\.php|config\.example\.php|database\.sql)$">
+  Require all denied
+</FilesMatch>
+
+# Fallback para Apache antigo
+<IfModule !mod_authz_core.c>
+  <FilesMatch "^(config\.php|config\.example\.php|database\.sql)$">
+    Order allow,deny
+    Deny from all
+  </FilesMatch>
+</IfModule>
+
+# SPA / rotas limpas (site React buildado)
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Não interferir no painel PHP
+  RewriteRule ^admin/ - [L]
+
+  # Arquivos e pastas reais passam direto
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Demais rotas → index.html do portfólio
+  RewriteRule ^ index.html [L]
+</IfModule>
