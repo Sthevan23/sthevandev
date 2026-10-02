@@ -101,6 +101,25 @@ export const projects: Project[] = [
     mockup: "store",
   },
   {
+    id: "pipocando",
+    name: "Pipocando VV",
+    category: "E-commerce / Cardápio",
+    description:
+      "Loja de pipocas trufadas com montagem de pote, cardápio, carrinho, cupons e pedido pelo WhatsApp.",
+    technologies: ["HTML", "CSS", "JavaScript", "PHP"],
+    image: "/projects/pipoca/pipoca-g.jpg",
+    thumbs: [
+      "/projects/pipoca/pipoca-m.jpg",
+      "/projects/pipoca/pipoca-p.jpg",
+      "/projects/pipoca/pipoca-g.jpg",
+    ],
+    href: "https://pipocandovv.com.br",
+    size: "lg",
+    accent: "#f5c542",
+    year: "2026",
+    mockup: "store",
+  },
+  {
     id: "donuts",
     name: "Sweet Donuts",
     category: "Website / Cardápio",

@@ -54,8 +54,8 @@ try {
         ],
         [
             'client_name' => 'Pipoca',
-            'site_name' => 'Pipoca',
-            'url' => '',
+            'site_name' => 'Pipocando VV',
+            'url' => 'https://pipocandovv.com.br',
             'monthly_value' => 50,
             'due_day' => 5,
             'notes' => 'Mensalidade vence dia 5',

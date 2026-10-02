@@ -83,7 +83,7 @@ INSERT INTO `clients`
 VALUES
 ('Aurora Confeitaria', 'Aurora Confeitaria', 'https://auroraconfeitaria.com.br', 50.00, 'ativo', 5, CURDATE(), 'Mensalidade vence dia 5'),
 ('Veríssimo Pratas', 'Veríssimo Pratas', 'https://verissimopratas.com.br', 70.00, 'ativo', 5, CURDATE(), 'Mensalidade vence dia 5'),
-('Pipoca', 'Pipoca', '', 50.00, 'ativo', 5, CURDATE(), 'Mensalidade vence dia 5'),
+('Pipoca', 'Pipocando VV', 'https://pipocandovv.com.br', 50.00, 'ativo', 5, CURDATE(), 'Mensalidade vence dia 5'),
 ('Gimarry', 'Gimarry Bolos', 'https://gimarrybolos.com.br', 50.00, 'ativo', 15, CURDATE(), 'Mensalidade vence dia 15'),
 ('Veronica', 'Veronica', '', 50.00, 'ativo', 5, CURDATE(), 'Mensalidade vence dia 5');
 
