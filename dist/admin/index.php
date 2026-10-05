@@ -269,7 +269,7 @@ $user = auth_user();
               <td>dia <?= (int) ($c['due_day'] ?? 5) ?></td>
               <td>
                 <div class="adm-pay-btns">
-                  <form method="post">
+                  <form method="post" class="adm-pay-form">
                     <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>" />
                     <input type="hidden" name="action" value="set_paid" />
                     <input type="hidden" name="id" value="<?= (int) $c['id'] ?>" />
@@ -278,7 +278,7 @@ $user = auth_user();
                       Pago
                     </button>
                   </form>
-                  <form method="post">
+                  <form method="post" class="adm-pay-form">
                     <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>" />
                     <input type="hidden" name="action" value="set_paid" />
                     <input type="hidden" name="id" value="<?= (int) $c['id'] ?>" />

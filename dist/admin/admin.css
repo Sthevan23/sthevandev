@@ -457,19 +457,31 @@ button {
 }
 
 .adm-pay-btns {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.adm-pay-btns form,
+.adm-pay-form {
+  display: inline;
+  margin: 0;
+  padding: 0;
 }
 
 .adm-pay-btn {
-  padding: 0.35rem 0.7rem;
+  display: inline-block;
+  padding: 0.45rem 0.85rem;
   border-radius: 999px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 0.75rem;
-  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: #2a2e38;
+  color: #e4e2dc;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
   cursor: pointer;
   transition:
     background 0.2s,
@@ -478,20 +490,29 @@ button {
 }
 
 .adm-pay-btn:hover {
-  color: var(--text);
-  border-color: var(--border-strong);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.adm-pay-ok {
+  border-color: rgba(52, 211, 153, 0.35);
+  color: #86efac;
 }
 
 .adm-pay-ok.is-active {
-  background: rgba(52, 211, 153, 0.16);
-  border-color: rgba(52, 211, 153, 0.45);
-  color: #34d399;
+  background: #34d399;
+  border-color: #34d399;
+  color: #0a0a0c;
+}
+
+.adm-pay-pending {
+  border-color: rgba(251, 191, 36, 0.35);
+  color: #fde68a;
 }
 
 .adm-pay-pending.is-active {
-  background: rgba(251, 191, 36, 0.14);
-  border-color: rgba(251, 191, 36, 0.4);
-  color: #fbbf24;
+  background: #fbbf24;
+  border-color: #fbbf24;
+  color: #0a0a0c;
 }
 
 .adm-row-actions {
