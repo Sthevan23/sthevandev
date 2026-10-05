@@ -160,7 +160,7 @@ $user = auth_user();
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin — Clientes | Sthevan Dev</title>
-  <link rel="stylesheet" href="admin.css" />
+  <link rel="stylesheet" href="admin.css?v=3" />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=Sora:wght@400;500;600&display=swap" rel="stylesheet" />
 </head>
 <body class="adm">
