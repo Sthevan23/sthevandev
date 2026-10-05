@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS `clients` (
   `monthly_value` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
   `status` ENUM('ativo','pausado','cancelado') NOT NULL DEFAULT 'ativo',
   `due_day` TINYINT UNSIGNED NOT NULL DEFAULT 5,
+  `paid` TINYINT(1) NOT NULL DEFAULT 0,
   `start_date` DATE DEFAULT NULL,
   `notes` TEXT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

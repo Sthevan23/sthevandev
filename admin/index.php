@@ -11,6 +11,25 @@ $editing = null;
 
 $statuses = ['ativo', 'pausado', 'cancelado'];
 
+function ensure_client_columns(PDO $pdo): void
+{
+    static $done = false;
+    if ($done) {
+        return;
+    }
+    $due = $pdo->query("SHOW COLUMNS FROM clients LIKE 'due_day'")->fetch();
+    if (!$due) {
+        $pdo->exec("ALTER TABLE clients ADD COLUMN due_day TINYINT UNSIGNED NOT NULL DEFAULT 5 AFTER status");
+    }
+    $paid = $pdo->query("SHOW COLUMNS FROM clients LIKE 'paid'")->fetch();
+    if (!$paid) {
+        $pdo->exec("ALTER TABLE clients ADD COLUMN paid TINYINT(1) NOT NULL DEFAULT 0 AFTER due_day");
+    }
+    $done = true;
+}
+
+ensure_client_columns($pdo);
+
 // ---- Actions ----
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!csrf_verify($_POST['csrf'] ?? null)) {
@@ -28,6 +47,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
+        if ($action === 'set_paid') {
+            $id = (int) ($_POST['id'] ?? 0);
+            $paid = (int) ($_POST['paid'] ?? 0) === 1 ? 1 : 0;
+            if ($id > 0) {
+                $stmt = $pdo->prepare('UPDATE clients SET paid = ? WHERE id = ?');
+                $stmt->execute([$paid, $id]);
+                $flash = $paid ? 'Marcado como pago.' : 'Marcado como ainda não pago.';
+            }
+        }
+
         if ($action === 'save') {
             $id = (int) ($_POST['id'] ?? 0);
             $clientName = trim((string) ($_POST['client_name'] ?? ''));
@@ -36,6 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $monthly = (float) str_replace(',', '.', (string) ($_POST['monthly_value'] ?? '0'));
             $status = (string) ($_POST['status'] ?? 'ativo');
             $dueDay = (int) ($_POST['due_day'] ?? 5);
+            $paid = (int) ($_POST['paid'] ?? 0) === 1 ? 1 : 0;
             $startDate = trim((string) ($_POST['start_date'] ?? ''));
             $notes = trim((string) ($_POST['notes'] ?? ''));
 
@@ -52,23 +82,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $startDateSql = $startDate !== '' ? $startDate : null;
 
-                // Garante coluna due_day
-                $hasDue = $pdo->query("SHOW COLUMNS FROM clients LIKE 'due_day'")->fetch();
-                if (!$hasDue) {
-                    $pdo->exec("ALTER TABLE clients ADD COLUMN due_day TINYINT UNSIGNED NOT NULL DEFAULT 5 AFTER status");
-                }
-
                 if ($id > 0) {
                     $stmt = $pdo->prepare(
-                        'UPDATE clients SET client_name=?, site_name=?, url=?, monthly_value=?, status=?, due_day=?, start_date=?, notes=? WHERE id=?'
+                        'UPDATE clients SET client_name=?, site_name=?, url=?, monthly_value=?, status=?, due_day=?, paid=?, start_date=?, notes=? WHERE id=?'
                     );
-                    $stmt->execute([$clientName, $siteName, $url, $monthly, $status, $dueDay, $startDateSql, $notes, $id]);
+                    $stmt->execute([$clientName, $siteName, $url, $monthly, $status, $dueDay, $paid, $startDateSql, $notes, $id]);
                     $flash = 'Cliente atualizado.';
                 } else {
                     $stmt = $pdo->prepare(
-                        'INSERT INTO clients (client_name, site_name, url, monthly_value, status, due_day, start_date, notes) VALUES (?,?,?,?,?,?,?,?)'
+                        'INSERT INTO clients (client_name, site_name, url, monthly_value, status, due_day, paid, start_date, notes) VALUES (?,?,?,?,?,?,?,?,?)'
                     );
-                    $stmt->execute([$clientName, $siteName, $url, $monthly, $status, $dueDay, $startDateSql, $notes]);
+                    $stmt->execute([$clientName, $siteName, $url, $monthly, $status, $dueDay, $paid, $startDateSql, $notes]);
                     $flash = 'Cliente adicionado.';
                 }
             }
@@ -116,14 +140,17 @@ $statsRow = $pdo->query(
     "SELECT
         COUNT(*) AS total,
         SUM(CASE WHEN status = 'ativo' THEN 1 ELSE 0 END) AS active,
-        COALESCE(SUM(CASE WHEN status = 'ativo' THEN monthly_value ELSE 0 END), 0) AS mrr
+        COALESCE(SUM(CASE WHEN status = 'ativo' THEN monthly_value ELSE 0 END), 0) AS mrr,
+        SUM(CASE WHEN status = 'ativo' AND paid = 1 THEN 1 ELSE 0 END) AS paid_count,
+        SUM(CASE WHEN status = 'ativo' AND paid = 0 THEN 1 ELSE 0 END) AS unpaid_count
      FROM clients"
 )->fetch();
 
 $total = (int) ($statsRow['total'] ?? 0);
 $active = (int) ($statsRow['active'] ?? 0);
 $mrr = (float) ($statsRow['mrr'] ?? 0);
-$yearly = $mrr * 12;
+$paidCount = (int) ($statsRow['paid_count'] ?? 0);
+$unpaidCount = (int) ($statsRow['unpaid_count'] ?? 0);
 
 $user = auth_user();
 ?>
@@ -176,8 +203,8 @@ $user = auth_user();
     </article>
     <article class="adm-stat">
       <div>
-        <span>Projeção anual</span>
-        <strong><?= money_br($yearly) ?></strong>
+        <span>Pagos / pendentes</span>
+        <strong><?= $paidCount ?> / <?= $unpaidCount ?></strong>
       </div>
     </article>
   </section>
@@ -214,12 +241,13 @@ $user = auth_user();
             <th>Site</th>
             <th>Valor mensal</th>
             <th>Vence</th>
-            <th>Status</th>
+            <th>Pagamento</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           <?php foreach ($clients as $c): ?>
+            <?php $isPaid = (int) ($c['paid'] ?? 0) === 1; ?>
             <tr>
               <td>
                 <strong><?= e($c['client_name']) ?></strong>
@@ -239,7 +267,28 @@ $user = auth_user();
               </td>
               <td class="adm-money"><?= money_br($c['monthly_value']) ?></td>
               <td>dia <?= (int) ($c['due_day'] ?? 5) ?></td>
-              <td><span class="adm-status adm-status-<?= e($c['status']) ?>"><?= e($c['status']) ?></span></td>
+              <td>
+                <div class="adm-pay-btns">
+                  <form method="post">
+                    <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>" />
+                    <input type="hidden" name="action" value="set_paid" />
+                    <input type="hidden" name="id" value="<?= (int) $c['id'] ?>" />
+                    <input type="hidden" name="paid" value="1" />
+                    <button type="submit" class="adm-pay-btn adm-pay-ok<?= $isPaid ? ' is-active' : '' ?>">
+                      Pago
+                    </button>
+                  </form>
+                  <form method="post">
+                    <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>" />
+                    <input type="hidden" name="action" value="set_paid" />
+                    <input type="hidden" name="id" value="<?= (int) $c['id'] ?>" />
+                    <input type="hidden" name="paid" value="0" />
+                    <button type="submit" class="adm-pay-btn adm-pay-pending<?= !$isPaid ? ' is-active' : '' ?>">
+                      Ainda não
+                    </button>
+                  </form>
+                </div>
+              </td>
               <td class="adm-row-actions">
                 <a class="adm-icon-btn" href="?edit=<?= (int) $c['id'] ?>" title="Editar">✎</a>
                 <form method="post" onsubmit="return confirm('Remover este cliente?');" style="display:inline">
@@ -301,10 +350,17 @@ $user = auth_user();
               </select>
             </label>
             <label>
-              Data de início
-              <input type="date" name="start_date" value="<?= e($editing['start_date'] ?? date('Y-m-d')) ?>" />
+              Pagamento do mês
+              <select name="paid">
+                <option value="0" <?= ((int) ($editing['paid'] ?? 0) === 0) ? 'selected' : '' ?>>Ainda não</option>
+                <option value="1" <?= ((int) ($editing['paid'] ?? 0) === 1) ? 'selected' : '' ?>>Pago</option>
+              </select>
             </label>
           </div>
+          <label>
+            Data de início
+            <input type="date" name="start_date" value="<?= e($editing['start_date'] ?? date('Y-m-d')) ?>" />
+          </label>
           <label>
             Observações
             <textarea name="notes" rows="3" placeholder="Plano, domínio, hospedagem…"><?= e($editing['notes'] ?? '') ?></textarea>

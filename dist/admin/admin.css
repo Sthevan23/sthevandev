@@ -456,6 +456,44 @@ button {
   color: var(--danger);
 }
 
+.adm-pay-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.adm-pay-btn {
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+}
+
+.adm-pay-btn:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.adm-pay-ok.is-active {
+  background: rgba(52, 211, 153, 0.16);
+  border-color: rgba(52, 211, 153, 0.45);
+  color: #34d399;
+}
+
+.adm-pay-pending.is-active {
+  background: rgba(251, 191, 36, 0.14);
+  border-color: rgba(251, 191, 36, 0.4);
+  color: #fbbf24;
+}
+
 .adm-row-actions {
   display: flex;
   gap: 0.25rem;
